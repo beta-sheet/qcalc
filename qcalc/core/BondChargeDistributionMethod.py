@@ -6,9 +6,9 @@ from qcalc.core.ChargeDistributionMethod import ChargeDistributionMethod
 
 class BondChargeDistributionMethod (ChargeDistributionMethod):
     
-    def __init__(self, connectivity, distanceMatrix, diameters, chargeTransferTopology, netCharge=0, maxOrder=1):
+    def __init__(self, connectivity, distanceMatrix, diameters, chargeTransferTopology, netCharge=0, maxOrder=1, fpepsi=False):
             
-        super().__init__(connectivity, distanceMatrix, diameters, netCharge, maxOrder)
+        super().__init__(connectivity, distanceMatrix, diameters, netCharge, maxOrder, fpepsi)
         
         self.checkDim(chargeTransferTopology, self.N)
         self.chargeTransferTopology = chargeTransferTopology

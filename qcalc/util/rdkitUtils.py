@@ -48,6 +48,20 @@ def extractMol(mol):
             
     return molData   
     
+def getAtomLabels(mol, atomTypeFunc):
+    return np.array([atomTypeFunc(atom, mol) for atom in mol.GetAtoms()])
+
+def getBondLabels(mol, bondTypeFunc):
+    return np.array([bondTypeFunc(bond, mol) for bond in mol.GetBonds()])
+
+
+def extractIndices(mol, params, atomTypeFunc, typeLabel, elnegLabel, hardnessLabel, diameterLabel):
+    atomTypes = np.array([atomTypeFunc(atom, mol) for atom in mol.GetAtoms()])
+    try:
+        indices = np.array([params.index[params[typeLabel] == a][0] for a in atomTypes])
+    except IndexError:
+        print("Invalid atom type - check your atomTypeFunc!")
+    return indices
 
 # extract electronegativities, hardnesses and diameters
 def extractParams (mol, params, atomTypeFunc, atomLabel, elnegLabel, hardnessLabel, diameterLabel):

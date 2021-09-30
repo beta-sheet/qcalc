@@ -5,16 +5,23 @@ import numpy as np
 from qcalc.core.BondChargeDistributionMethod import BondChargeDistributionMethod
 
 class AACT (BondChargeDistributionMethod):
+
+    # parameter specifications
+    paramSpec = ["electronegativity"]
+    bondParamSpec = ["hardness"]
     
     def __init__(self, connectivity, distanceMatrix, diameters, bondHardness, electronegativity, chargeTransferTopology, \
-            netCharge=0, maxOrder=1):
+            netCharge=0, maxOrder=1, fpepsi=False):
             
-        super().__init__(connectivity, distanceMatrix, diameters, chargeTransferTopology, netCharge, maxOrder)
+        super().__init__(connectivity, distanceMatrix, diameters, chargeTransferTopology, netCharge, maxOrder, fpepsi)
             
         self.checkDim(electronegativity, self.N)
         
         self.bondHardness = bondHardness
         self.electronegativity = electronegativity
+
+        # 2B overwritten in compute
+        self.B = len(bondHardness)
         
     
     def compute (self):
@@ -35,3 +42,12 @@ class AACT (BondChargeDistributionMethod):
         self.bondCharges = self.solve(self.bondElneg, self.bondJMatrix)
         self.charges = self.toAtomicCharges(self.bondCharges, self.bVars)
         return self.charges
+
+    def setIndices(self, indices, bondIndices, ntypes):
+        self.elnegIndices = indices
+        self.bondHardnessIndices = bondIndices + ntypes
+
+    # for optimization
+    def setParams(self, paramsArr):
+        self.electronegativity = paramsArr[self.elnegIndices]
+        self.bondHardness = paramsArr[self.bondHardnessIndices]
